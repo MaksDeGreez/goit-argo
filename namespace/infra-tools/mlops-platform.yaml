@@ -1,0 +1,39 @@
+# Root Application for the MLflow platform of homework 4.
+#
+# It does not deploy any service itself. It points Argo CD at a folder of
+# Application manifests in the homework repository, and Argo CD creates every
+# Application it finds there. This is the "app of apps" pattern.
+#
+# The chain is:
+#
+#   ApplicationSet (namespace/*)
+#     -> Application "infra-tools"   (this folder)
+#          -> Application "mlops-platform"          (this file)
+#               -> Applications minio, postgres, mlflow,
+#                  pushgateway, prometheus, grafana
+#                    -> the actual Helm charts and manifests
+#
+# So the four Application manifests the assignment asks for stay in the
+# homework project, where its expected folder structure puts them, and they are
+# still deployed by Argo CD straight from Git.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlops-platform
+  namespace: infra-tools
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/MaksDeGreez/goit-mlops.git
+    targetRevision: lesson-9
+    path: lesson-9/argocd/applications
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infra-tools
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
