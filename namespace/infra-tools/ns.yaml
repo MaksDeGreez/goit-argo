@@ -1,0 +1,8 @@
+# Namespace for the platform tools. Argo CD itself already runs here: it was
+# installed by Terraform with "create_namespace = true". Keeping the namespace
+# in Git as well means the whole cluster layout is described in one place, and
+# Argo CD simply adopts the namespace that already exists.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-tools
